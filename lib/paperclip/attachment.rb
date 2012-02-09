@@ -73,7 +73,9 @@ module Paperclip
       @queued_for_delete     = []
       @queued_for_write      = {}
       @errors                = {}
-      @dirty                 = false
+      @dirty                 = false          
+		 	@path_s3           		 = options[:path_s3]
+		  @path_s3          		 = @path_s3.call(self) if @path_s3.is_a?(Proc)
       @interpolator          = options[:interpolator]
       @url_generator         = options[:url_generator].new(self, @options)
       @source_file_options   = options[:source_file_options]
@@ -166,6 +168,11 @@ module Paperclip
       path = original_filename.nil? ? nil : interpolate(path_option, style_name)
       path.respond_to?(:unescape) ? path.unescape : path
     end
+
+	 	def path_s3(style = nil)
+	    path = original_filename.nil? ? nil : interpolate(@path_s3, style)       
+	    path.respond_to?(:unescape) ? path.unescape : path     
+	  end
 
     # Alias to +url+
     def to_s style_name = default_style
